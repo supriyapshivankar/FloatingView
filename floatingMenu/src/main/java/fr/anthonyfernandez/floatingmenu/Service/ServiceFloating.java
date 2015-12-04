@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -22,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
 import fr.anthonyfernandez.floatingmenu.R;
@@ -68,25 +70,32 @@ public class ServiceFloating extends Service {
 		listCity = new ArrayList();
 		for(int i=0 ; i<apps.size() ; ++i) {
 			listCity.add(apps.get(i));
+            Log.d(" MyTag1 onCreate 01", "" + apps.get(i));
 		}
 
 		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
 		chatHead = new ImageView(this);
 		
-		chatHead.setImageResource(R.drawable.floating2);
+		chatHead.setImageResource(R.drawable.floating2);// chat head Image
+
+        Log.d("MyTag1 SF ", " on create 1");
 		
 		if(prefs.getString("ICON", "floating2").equals("floating3")){
 			chatHead.setImageResource(R.drawable.floating3);
+            Log.d("MyTag1 SF ", " on create 2.1");
 		} else if(prefs.getString("ICON", "floating2").equals("floating4")){
 			chatHead.setImageResource(R.drawable.floating4);
+            Log.d("MyTag1 SF ", " on create 2.2");
 		} else if(prefs.getString("ICON", "floating2").equals("floating5")){
 			chatHead.setImageResource(R.drawable.floating5);
+            Log.d("MyTag1 SF ", " on create 2.3");
 		} else if(prefs.getString("ICON", "floating2").equals("floating5")){
 			chatHead.setImageResource(R.drawable.floating2);
+            Log.d("MyTag1 SF ", " on create 2.4");
 		}
 
-		final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+		final WindowManager.LayoutParams params = new WindowManager.LayoutParams( // Chat Window
 				WindowManager.LayoutParams.WRAP_CONTENT,
 				WindowManager.LayoutParams.WRAP_CONTENT,
 				WindowManager.LayoutParams.TYPE_PHONE,
@@ -111,6 +120,8 @@ public class ServiceFloating extends Service {
 					switch (event.getAction()) {
 					case MotionEvent.ACTION_DOWN:
 
+                        Log.d("MyTag1 SF ", " on Touch 1");
+
 						// Get current time in nano seconds.
 						long pressTime = System.currentTimeMillis();
 
@@ -120,9 +131,11 @@ public class ServiceFloating extends Service {
 							createNotification();
 							ServiceFloating.this.stopSelf();
 							mHasDoubleClicked = true;
+                            Log.d("MyTag1 SF ", " on Touch 2.1");
 						}
 						else {     // If not double click....
 							mHasDoubleClicked = false;
+                            Log.d("MyTag1 SF ", " on Touch 2.2");
 						}
 						lastPressTime = pressTime; 
 						initialX = paramsF.x;
@@ -131,11 +144,13 @@ public class ServiceFloating extends Service {
 						initialTouchY = event.getRawY();
 						break;
 					case MotionEvent.ACTION_UP:
+                        Log.d("MyTag1 SF ", " on Touch 3");
 						break;
 					case MotionEvent.ACTION_MOVE:
 						paramsF.x = initialX + (int) (event.getRawX() - initialTouchX);
 						paramsF.y = initialY + (int) (event.getRawY() - initialTouchY);
 						windowManager.updateViewLayout(chatHead, paramsF);
+                        Log.d("MyTag1 SF ", " on Touch 4");
 						break;
 					}
 					return false;
@@ -151,6 +166,7 @@ public class ServiceFloating extends Service {
 			public void onClick(View arg0) {
 				initiatePopupWindow(chatHead);
 				_enable = false;
+                Log.d("MyTag1 SF ", " ChatHead click Listener");
 				//				Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 				//				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				//				getApplicationContext().startActivity(intent);
@@ -162,20 +178,29 @@ public class ServiceFloating extends Service {
 
 	private void initiatePopupWindow(View anchor) {
 		try {
+
+
+            Log.d("MyTag1 SF ", "popup window 1");
+
 			Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 			ListPopupWindow popup = new ListPopupWindow(this);
 			popup.setAnchorView(anchor);
-			popup.setWidth((int) (display.getWidth()/(1.5)));
+			popup.setWidth((int) (display.getWidth() / (1.5)));
 			//ArrayAdapter<String> arrayAdapter = 
 			//new ArrayAdapter<String>(this,R.layout.list_item, myArray);
 			popup.setAdapter(new CustomAdapter(getApplicationContext(), R.layout.row, listCity));
-			popup.setOnItemClickListener(new OnItemClickListener() {
+
+			Log.d("MyTag1 SF ", "popup window 2");
+
+
+			/*popup.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View view, int position, long id3) {
 					//Log.w("tag", "package : "+apps.get(position).pname.toString());
 					Intent i;
 					PackageManager manager = getPackageManager();
+                    Log.d("MyTag1 SF ", "OnItemClickListenerStart");
 					try {
 						i = manager.getLaunchIntentForPackage(apps.get(position).pname.toString());
 						if (i == null)
@@ -185,8 +210,9 @@ public class ServiceFloating extends Service {
 					} catch (PackageManager.NameNotFoundException e) {
 
 					}
+                    Log.d("MyTag1 SF ", "OnItemClickListenerEnd");
 				}
-			});
+			});*/
 			popup.show();
 
 		} catch (Exception e) {
@@ -199,12 +225,14 @@ public class ServiceFloating extends Service {
 		PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, notificationIntent, 0);
 
 		Notification notification = new Notification(R.drawable.floating2, "Click to start launcher",System.currentTimeMillis());
-		notification.setLatestEventInfo(getApplicationContext(), "Start launcher" ,  "Click to start launcher", pendingIntent);
+		//notification.setLatestEventInfo(getApplicationContext(), "Start launcher" ,  "Click to start launcher", pendingIntent);
 		notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONGOING_EVENT;
 
 		NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
 		notificationManager.notify(ID_NOTIFICATION,notification);
+
+        Log.d("MyTag1 SF ", " Notification");
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.List;
 import fr.anthonyfernandez.floatingmenu.R;
 import fr.anthonyfernandez.floatingmenu.Manager.PInfo;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class CustomAdapter extends ArrayAdapter{
         resource = resourceId;
         inflater = LayoutInflater.from( ctx );
         context=ctx;
+        Log.d("MyTag1 CA, ", "constructor" );
     }
 
     @Override
@@ -36,7 +38,7 @@ public class CustomAdapter extends ArrayAdapter{
 
         TextView txtName = (TextView) convertView.findViewById(R.id.textView1);
         txtName.setText(app.appname);
-
+        Log.d("MyTag1 CA getView:  ", "" + app.appname);
         ImageView imageCity = (ImageView) convertView.findViewById(R.id.imageView1);
         imageCity.setImageDrawable(app.icon);
         return convertView;

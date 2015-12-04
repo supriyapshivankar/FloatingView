@@ -11,6 +11,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.provider.Settings;
 
 public class MainActivity extends Activity {
 	
@@ -26,12 +28,16 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d("MyTag1 MA onCreate: ", "Started");
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		Bundle bundle = getIntent().getExtras();
 
 		if(bundle != null && bundle.getString("LAUNCH").equals("YES")) {
+			Log.d("MyTag1 MA: ", "Bundle");
 			startService(new Intent(MainActivity.this, ServiceFloating.class));
 		}
 
@@ -41,6 +47,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				startService(new Intent(MainActivity.this, ServiceFloating.class));
+                Log.d("MyTag1 ", "Button1");
 			}
 		});
 
